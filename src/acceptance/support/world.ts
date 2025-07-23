@@ -1,15 +1,15 @@
-import { chromium, Browser, Page, BrowserContext } from "@playwright/test";
-import { setWorldConstructor, World, IWorldOptions } from "@cucumber/cucumber";
-import { AccountRegistrationWebDriver } from "../drivers/web/account_registration_web_driver";
-import { ITestCaseHookParameter } from "@cucumber/cucumber/lib/support_code_library_builder/types";
-import { parseTag } from "../../types/test.types";
-import { validateFeatureTags } from "../../types/feature.validator";
-import { AccountRegistrationDriver } from "../drivers/account_registration_driver.interface";
-import { AccountRegistrationDSL } from "../dsl/account_registration_dsl";
-import { AccountRegistrationApiDriver } from "../drivers/api/account_registration_api_driver";
-import { LoginWebDriver } from "../drivers/web/login_web_driver";
-import { LoginDSL } from "../dsl/login_dsl";
-import { LoginDriver } from "../drivers/login_driver.interface";
+import { chromium, Browser, Page, BrowserContext } from '@playwright/test';
+import { setWorldConstructor, World, IWorldOptions } from '@cucumber/cucumber';
+import { AccountRegistrationWebDriver } from '../drivers/web/account_registration_web_driver';
+import { ITestCaseHookParameter } from '@cucumber/cucumber/lib/support_code_library_builder/types';
+import { parseTag } from '../../types/test.types';
+import { validateFeatureTags } from '../../types/feature.validator';
+import { AccountRegistrationDriver } from '../drivers/account_registration_driver.interface';
+import { AccountRegistrationDSL } from '../dsl/account_registration_dsl';
+import { AccountRegistrationApiDriver } from '../drivers/api/account_registration_api_driver';
+import { LoginWebDriver } from '../drivers/web/login_web_driver';
+import { LoginDSL } from '../dsl/login_dsl';
+import { LoginDriver } from '../drivers/login_driver.interface';
 
 export class CustomWorld extends World {
   public accountRegistrationDSL: AccountRegistrationDSL | null = null;
@@ -31,21 +31,27 @@ export class CustomWorld extends World {
     try {
       validateFeatureTags(tags);
     } catch (error) {
-      console.error("Invalid tags in feature file:", error);
+      console.error('Invalid tags in feature file:', error);
       throw error;
     }
 
     const testTags = tags.map(parseTag).filter((tag): tag is NonNullable<typeof tag> => tag !== null);
-    const isUITest = testTags.some((tag) => tag.driver === "ui");
-    const isApiTest = testTags.some((tag) => tag.driver === "api");
+    const isUITest = testTags.some((tag) => tag.driver === 'ui');
+    const isApiTest = testTags.some((tag) => tag.driver === 'api');
 
     if (isUITest) {
-      this.browser = await chromium.launch();
+      // Check if HEADLESS environment variable is set to false
+      const headless = process.env.HEADLESS !== 'false';
+
+      this.browser = await chromium.launch({
+        headless,
+        slowMo: headless ? 0 : 3000, // Slow down operations in headed mode for better visibility
+      });
       this.page = await this.browser.newPage();
 
       // Add the specific header that bypasses DataDome
       await this.page.setExtraHTTPHeaders({
-        "user-agent": "avesta-ua",
+        'user-agent': 'avesta-ua',
       });
 
       this.accountRegistrationDriver = new AccountRegistrationWebDriver(this.page);
@@ -54,7 +60,7 @@ export class CustomWorld extends World {
       this.accountRegistrationDriver = new AccountRegistrationApiDriver();
       // TODO: Add API driver for login when needed
     } else {
-      throw new Error("Scenario must be tagged with either @ui or @api");
+      throw new Error('Scenario must be tagged with either @ui or @api');
     }
 
     this.accountRegistrationDSL = new AccountRegistrationDSL(this.accountRegistrationDriver);
