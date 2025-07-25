@@ -1,3 +1,4 @@
+
 Feature: User Login
   As a registered user
   I want to log in to the Digital Kudos Wall
@@ -8,7 +9,7 @@ Feature: User Login
     Background:
       Given the login service is available
 
-    @ui
+    @api
     Scenario: Successful login with valid credentials
       Given a user exists with email "user@example.com" and password "SecurePass1!"
       When the user logs in with:
@@ -17,7 +18,7 @@ Feature: User Login
       Then the login should be successful
       And the user should be redirected to the kudos wall
 
-    @ui
+    @api
     Scenario: Login attempt with incorrect credentials
       When the user logs in with:
         | Email            | Password    |
@@ -25,7 +26,7 @@ Feature: User Login
       Then the login should be rejected
       And the login error should be "Invalid email or password"
 
-    @ui
+    @api
     Scenario: Login attempt with non-existent email
       When the user logs in with:
         | Email                | Password     |

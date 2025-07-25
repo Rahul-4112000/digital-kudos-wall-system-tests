@@ -1,5 +1,5 @@
-import { LoginDriver } from "../drivers/login_driver.interface";
-import { LoginCredentials } from "./models/login";
+import { LoginDriver } from '../drivers/login_driver.interface';
+import { LoginCredentials } from './models/login';
 
 export class LoginDSL {
   constructor(private readonly loginDriver: LoginDriver) {}
@@ -26,6 +26,18 @@ export class LoginDSL {
 
   async getLoginErrorMessage(): Promise<string> {
     return this.loginDriver.getLoginErrorMessage();
+  }
+
+  async mustBeLoggedIn(): Promise<void> {
+    await this.loginDriver.checkServiceHealth();
+    await this.loginDriver.createTestUser({
+      email: 'user@example.com',
+      password: 'SecurePass1!',
+    });
+    await this.loginDriver.login({
+      email: 'user@example.com',
+      password: 'SecurePass1!',
+    });
   }
 
   async cleanup(): Promise<void> {

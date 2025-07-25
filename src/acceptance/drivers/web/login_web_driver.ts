@@ -1,9 +1,9 @@
-import { Page } from "@playwright/test";
-import { LoginDriver } from "../login_driver.interface";
-import { LoginCredentials } from "../../dsl/models/login";
-import { LoginPage } from "../web/pages/login.page";
-import { PageFactory } from "../web/pages/page.factory";
-import { CONFIG } from "../../../config/test.config";
+import { Page } from '@playwright/test';
+import { LoginDriver } from '../login_driver.interface';
+import { LoginCredentials } from '../../dsl/models/login';
+import { LoginPage } from '../web/pages/login.page';
+import { PageFactory } from '../web/pages/page.factory';
+import { CONFIG } from '../../../config/test.config';
 
 export class LoginWebDriver implements LoginDriver {
   private readonly loginPage: LoginPage;
@@ -19,7 +19,7 @@ export class LoginWebDriver implements LoginDriver {
   async createTestUser(credentials: LoginCredentials): Promise<void> {
     const response = await this.page.request.post(`${CONFIG.apiUrl}/test-support/users`, {
       data: {
-        name: "Test User",
+        name: 'Test User',
         email: credentials.email,
         password: credentials.password,
       },
@@ -53,10 +53,10 @@ export class LoginWebDriver implements LoginDriver {
     try {
       const response = await this.page.request.delete(`${CONFIG.apiUrl}/test-support/cleanup`);
       if (!response.ok()) {
-        console.warn("Failed to cleanup test data:", await response.text());
+        console.warn('Failed to cleanup test data:', await response.text());
       }
     } catch (error) {
-      console.warn("Failed to cleanup test data:", error);
+      console.warn('Failed to cleanup test data:', error);
     }
   }
 }

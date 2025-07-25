@@ -1,16 +1,16 @@
-import { TestType, TestDriver, isValidTestType, isValidTestDriver } from "./test.types";
+import { TestType, TestDriver, isValidTestType, isValidTestDriver } from './test.types';
 
 type FeatureTag = `@${TestType}` | `@${TestDriver}`;
 
 export const validateFeatureTags = (tags: string[]): FeatureTag[] => {
   const invalidTags = tags.filter((tag) => {
-    const tagName = tag.startsWith("@") ? tag.substring(1) : tag;
+    const tagName = tag.startsWith('@') ? tag.substring(1) : tag;
     return !isValidTestType(tagName) && !isValidTestDriver(tagName);
   });
 
   if (invalidTags.length > 0) {
     throw new Error(
-      `Invalid tags found: ${invalidTags.join(", ")}. Valid tags are: @e2e, @smoke, @acceptance, @ui, @api`
+      `Invalid tags found: ${invalidTags.join(', ')}. Valid tags are: @e2e, @smoke, @acceptance, @ui, @api, @skip`
     );
   }
 

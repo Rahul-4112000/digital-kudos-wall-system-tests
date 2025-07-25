@@ -1,4 +1,4 @@
-import { LoginCredentials } from "../dsl/models/login";
+import { LoginCredentials } from '../dsl/models/login';
 
 export interface LoginDriver {
   checkServiceHealth(): Promise<void>;

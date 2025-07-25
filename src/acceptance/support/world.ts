@@ -10,15 +10,22 @@ import { AccountRegistrationApiDriver } from '../drivers/api/account_registratio
 import { LoginWebDriver } from '../drivers/web/login_web_driver';
 import { LoginDSL } from '../dsl/login_dsl';
 import { LoginDriver } from '../drivers/login_driver.interface';
+import { CreateKudosWebDriver } from '../drivers/web/create_kudos_web_driver';
+import { CreateKudosDriver } from '../drivers/create_kudos_driver.interface';
+import { CreateKudosDSL } from '../dsl/create_kudos_dsl';
+import { LoginApiDriver } from '../drivers/api/login_api_driver';
 
 export class CustomWorld extends World {
   public accountRegistrationDSL: AccountRegistrationDSL | null = null;
   public loginDSL: LoginDSL | null = null;
+  public createKudosDSL: CreateKudosDSL | null = null;
   protected page: Page | null = null;
   protected browser: Browser | null = null;
   private context: BrowserContext | null = null;
   private accountRegistrationDriver?: AccountRegistrationDriver;
   private loginDriver?: LoginDriver;
+
+  private createKudosDriver?: CreateKudosDriver;
   protected scenario?: ITestCaseHookParameter;
 
   constructor(options: IWorldOptions) {
@@ -45,7 +52,7 @@ export class CustomWorld extends World {
 
       this.browser = await chromium.launch({
         headless,
-        slowMo: headless ? 0 : 3000, // Slow down operations in headed mode for better visibility
+        slowMo: headless ? 0 : 500, // Slow down operations in headed mode for better visibility
       });
       this.page = await this.browser.newPage();
 
@@ -56,16 +63,21 @@ export class CustomWorld extends World {
 
       this.accountRegistrationDriver = new AccountRegistrationWebDriver(this.page);
       this.loginDriver = new LoginWebDriver(this.page);
+      this.createKudosDriver = new CreateKudosWebDriver(this.page);
     } else if (isApiTest) {
       this.accountRegistrationDriver = new AccountRegistrationApiDriver();
+      this.loginDriver = new LoginApiDriver();
       // TODO: Add API driver for login when needed
     } else {
       throw new Error('Scenario must be tagged with either @ui or @api');
     }
 
     this.accountRegistrationDSL = new AccountRegistrationDSL(this.accountRegistrationDriver);
-    if (this.loginDriver) {
-      this.loginDSL = new LoginDSL(this.loginDriver);
+
+    this.loginDSL = new LoginDSL(this.loginDriver);
+
+    if (this.createKudosDriver) {
+      this.createKudosDSL = new CreateKudosDSL(this.createKudosDriver);
     }
   }
 

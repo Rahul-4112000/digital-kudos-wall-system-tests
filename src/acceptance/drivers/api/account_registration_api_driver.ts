@@ -1,7 +1,7 @@
-import { request } from "@playwright/test";
-import { AccountRegistrationDriver } from "../account_registration_driver.interface";
-import { RegistrationDetails, RegistrationResult } from "../../dsl/models/registration";
-import { CONFIG } from "../../../config/test.config";
+import { request } from '@playwright/test';
+import { AccountRegistrationDriver } from '../account_registration_driver.interface';
+import { RegistrationDetails, RegistrationResult } from '../../dsl/models/registration';
+import { CONFIG } from '../../../config/test.config';
 
 export class AccountRegistrationApiDriver implements AccountRegistrationDriver {
   constructor() {}
@@ -10,7 +10,7 @@ export class AccountRegistrationApiDriver implements AccountRegistrationDriver {
     const context = await request.newContext();
     const response = await context.get(`${CONFIG.apiUrl}/health`);
     if (response.status() !== 200) {
-      throw new Error("Registration service is not available");
+      throw new Error('Registration service is not available');
     }
   }
 
@@ -50,13 +50,13 @@ export class AccountRegistrationApiDriver implements AccountRegistrationDriver {
 
   async verifyConfirmationEmail(email: string): Promise<boolean> {
     const context = await request.newContext();
-    const response = await context.get(`${CONFIG.apiUrl}/test-support/confirmations`, {
+    const response = await context.get(`${CONFIG.apiUrl}/test-support/verify-email`, {
       params: { email },
     });
 
     if (response.status() === 200) {
-      const { confirmationSent } = await response.json();
-      return confirmationSent;
+      const { sent } = await response.json();
+      return sent;
     }
     return false;
   }
@@ -69,7 +69,7 @@ export class AccountRegistrationApiDriver implements AccountRegistrationDriver {
         console.warn(`Cleanup failed with status ${response.status()}: ${await response.text()}`);
       }
     } catch (error) {
-      console.warn("Failed to cleanup test data:", error);
+      console.warn('Failed to cleanup test data:', error);
     }
   }
 }

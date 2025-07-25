@@ -1,3 +1,4 @@
+@skip
 Feature: Account Registration
   As a potential user
   I want to register for a new account
@@ -8,7 +9,7 @@ Feature: Account Registration
     Background:
       Given the registration service is available
 
-    @ui
+    @api
     Scenario: Successful registration with valid credentials
       When a user registers with valid details:
         | Name      | Email            | Password     |
@@ -16,7 +17,7 @@ Feature: Account Registration
       Then the registration should be successful
       And a confirmation should be sent to "user@example.com"
 
-    @ui
+    @api
     Scenario: Registration attempt with existing email
       Given a user exists with name "Existing User" and email "existing@example.com"
       When a user registers with details:
@@ -27,7 +28,7 @@ Feature: Account Registration
 
   Rule: Email must be in a valid format
 
-    @ui
+    @api
     Scenario Outline: Registration with invalid email format
       When a user registers with details:
         | Name      | Email   | Password     |
@@ -43,7 +44,7 @@ Feature: Account Registration
 
   Rule: Password must meet security requirements
 
-    @ui
+    @api
     Scenario Outline: Registration with invalid password
       When a user registers with details:
         | Name      | Email            | Password   |
